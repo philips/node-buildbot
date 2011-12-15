@@ -1,0 +1,32 @@
+{
+  "name": "buildbot-github",
+  "description": "",
+  "version": "0.1.0",
+  "author": "Brandon Philips <brandon@ifup.org> http://ifup.org",
+  "keywords": [ "buildbot" ],
+  "homepage": "https://github.com/philips/node-buildbot",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/philips/node-buildbot.git"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/whiskey --tests tests/*"
+  },
+  "dependencies": {
+    "logmagic": ">= 0.1.4",
+    "optimist": "= 0.2.8",
+    "async": ">= 0.1.4",
+    "sprintf": ">= 0.1.1"
+  },
+  "devDependencies": {
+    "node-dev": "0.1.5",
+    "whiskey": "0.6.x"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  }
+}
+
