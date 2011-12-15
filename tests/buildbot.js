@@ -5,11 +5,11 @@ var async = require('async');
 var logmagic = require('logmagic');
 
 exports['test_buildbot_in_progress'] = function(test, assert) {
-  http.createServer(function (req, res) {
+  server = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/json'});
     res.end(JSON.stringify(builds.in_progress_build) + "\n");
-    req.connection.destroy()
-  }).listen(8000, "127.0.0.1");
+  })
+  server.listen(8000, "127.0.0.1");
 
   poller = new pollers.BuildbotPoller({
     "host": "127.0.0.1",
@@ -26,7 +26,8 @@ exports['test_buildbot_in_progress'] = function(test, assert) {
   poller.start();
   poller.on('in_progress_build', function(build) {
     poller.stop();
+    server.close();
     assert.equal(Object.keys(builds.in_progress_build)[0], build.number.toString());
+    test.finish();
   });
-  test.finish();
 }
