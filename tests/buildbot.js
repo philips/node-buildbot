@@ -1,17 +1,17 @@
-var pollers = require('../lib/pollers');
+var buildbot = require('../buildbot');
 var builds = require('./fixtures/builds');
 var http = require('http');
 var async = require('async');
 var logmagic = require('logmagic');
 
-exports['test_buildbot_in_progress'] = function(test, assert) {
-  server = http.createServer(function (req, res) {
+function setupPollTest(build) {
+  var server = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/json'});
-    res.end(JSON.stringify(builds.in_progress_build) + "\n");
+    res.end(JSON.stringify(build) + "\n");
   })
   server.listen(8000, "127.0.0.1");
 
-  poller = new pollers.BuildbotPoller({
+  var bb = new buildbot.Buildbot({
     "host": "127.0.0.1",
     "port": "8000",
     "secure": false,
@@ -20,12 +20,33 @@ exports['test_buildbot_in_progress'] = function(test, assert) {
     "change_hook_path": "/change_hook/base",
     "category": "pull-requests",
     "builder_name": "Linux",
-    "num_builds": 1
-  }, 0);
+    "num_builds": 1,
+    "poll_interval": 0
+  });
 
-  poller.start();
-  poller.on('in_progress_build', function(build) {
-    poller.stop();
+  return {'bb': bb, 'server': server}
+}
+
+exports['test_buildbot_in_progress'] = function(test, assert) {
+  s = setupPollTest(builds.in_progress_build);
+  bb = s['bb']
+  server = s['server']
+  bb.start();
+  bb.on('in_progress_build', function(build) {
+    bb.stop();
+    server.close();
+    assert.equal(18529, build.number);
+    test.finish();
+  });
+}
+
+exports['test_buildbot_finished'] = function(test, assert) {
+  s = setupPollTest(builds.finished_build);
+  bb = s['bb']
+  server = s['server']
+  bb.start();
+  bb.on('new_build', function(build) {
+    bb.stop();
     server.close();
     assert.equal(18529, build.number);
     test.finish();

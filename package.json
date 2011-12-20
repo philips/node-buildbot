@@ -10,8 +10,9 @@
     "url": "git://github.com/philips/node-buildbot.git"
   },
   "directories": {
-    "lib": "./lib"
+    "lib": "lib"
   },
+  "main": "buildbot",
   "scripts": {
     "test": "./node_modules/.bin/whiskey --tests tests/*"
   },
