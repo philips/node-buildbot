@@ -4,16 +4,16 @@ var http = require('http');
 var async = require('async');
 var logmagic = require('logmagic');
 
-function setupPollTest(build) {
+function setupPollTest(port, build) {
   var server = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/json'});
     res.end(JSON.stringify(build) + "\n");
   })
-  server.listen(8000, "127.0.0.1");
+  server.listen(port, "127.0.0.1");
 
   var bb = new buildbot.Buildbot({
     "host": "127.0.0.1",
-    "port": "8000",
+    "port": port,
     "secure": false,
     "username": null,
     "password": null,
@@ -28,7 +28,7 @@ function setupPollTest(build) {
 }
 
 exports['test_buildbot_in_progress'] = function(test, assert) {
-  s = setupPollTest(builds.in_progress_build);
+  s = setupPollTest(8000, builds.in_progress_build);
   bb = s['bb']
   server = s['server']
   bb.start();
@@ -41,7 +41,7 @@ exports['test_buildbot_in_progress'] = function(test, assert) {
 }
 
 exports['test_buildbot_finished'] = function(test, assert) {
-  s = setupPollTest(builds.finished_build);
+  s = setupPollTest(8001, builds.finished_build);
   bb = s['bb']
   server = s['server']
   bb.start();
@@ -51,4 +51,41 @@ exports['test_buildbot_finished'] = function(test, assert) {
     assert.equal(18529, build.number);
     test.finish();
   });
+}
+
+exports['test_buildbot_change'] = function(test, assert) {
+  var server = http.createServer(function (req, res) {
+    req.on('data', function(chunk) {
+      assert.equal(builds.query_string, chunk);
+    });
+    req.on('end', function() {
+      assert.equal(req.method, 'POST');
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end("OK");
+    });
+  });
+  server.listen(8003, "127.0.0.1");
+
+  var bb = new buildbot.Buildbot({
+    "host": "127.0.0.1",
+    "port": "8003",
+    "secure": false,
+    "username": null,
+    "password": null,
+    "change_hook_path": "/change_hook/base",
+    "category": "pull-requests",
+    "builder_name": "Linux",
+    "num_builds": 1,
+    "poll_interval": 0
+  });
+
+  var callback = function(err, str) {
+    server.close();
+    test.finish();
+  };
+
+  var user = {"name": "Brandon Philips", "login": "philips", "email": "foo@example.com"};
+  bb.sendChanges("pull_name", "36a4decad246250208d9d982b4a14987f36bc292",
+    user, "node-github", "git@github.com:philips/node-buildbot.git",
+    "foo", "master", callback);
 }
