@@ -27,7 +27,7 @@ exports['test_buildbot_in_progress'] = function(test, assert) {
   poller.on('in_progress_build', function(build) {
     poller.stop();
     server.close();
-    assert.equal(Object.keys(builds.in_progress_build)[0], build.number.toString());
+    assert.equal(18529, build.number);
     test.finish();
   });
 }
