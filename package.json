@@ -1,10 +1,14 @@
 {
-  "name": "buildbot-github",
-  "description": "",
+  "name": "node-buildbot",
+  "description": "node module to interact with buildbot json api",
   "version": "0.1.0",
   "author": "Brandon Philips <brandon@ifup.org> http://ifup.org",
   "keywords": [ "buildbot" ],
   "homepage": "https://github.com/philips/node-buildbot",
+  "licenses" : [
+    { "type" : "Apache",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html" }
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/philips/node-buildbot.git"
