@@ -18,17 +18,19 @@
   },
   "main": "buildbot",
   "scripts": {
-    "test": "./node_modules/.bin/whiskey --tests tests/*"
+    "test": "./node_modules/.bin/whiskey --tests 'tests/builder.js tests/buildbot.js'"
   },
   "dependencies": {
     "logmagic": ">= 0.1.4",
     "optimist": "= 0.2.8",
     "async": ">= 0.1.4",
-    "sprintf": ">= 0.1.1"
+    "sprintf": ">= 0.1.1",
+    "request": "2.2.5"
   },
   "devDependencies": {
     "node-dev": "0.1.5",
-    "whiskey": "0.6.x"
+    "whiskey": "0.6.x",
+    "nock": "0.7.x"
   },
   "engines": {
     "node": ">= 0.4.0"
