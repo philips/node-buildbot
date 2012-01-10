@@ -13,11 +13,10 @@ function setupPollTest() {
   return builder;
 }
 
-exports['test_buildbot_in_progress'] = function(test, assert) {
+exports['test_buildbot_build_in_progress'] = function(test, assert) {
   var scope = nock(base_url)
                 .get('/json/builders/Linux/builds/')
-                .replyWithFile(200, __dirname + '/fixtures/in_progress.json')
-                .log(console.log);
+                .replyWithFile(200, __dirname + '/fixtures/in_progress.json');
   bb = setupPollTest();
   bb.start();
   bb.on('in_progress_build', function(build) {
@@ -28,11 +27,10 @@ exports['test_buildbot_in_progress'] = function(test, assert) {
   });
 }
 
-exports['test_buildbot_finished'] = function(test, assert) {
+exports['test_buildbot_build_finished'] = function(test, assert) {
   var scope = nock(base_url)
                 .get('/json/builders/Linux/builds/')
-                .replyWithFile(200, __dirname + '/fixtures/completed_build.json')
-                .log(console.log);
+                .replyWithFile(200, __dirname + '/fixtures/completed_build.json');
   bb = setupPollTest();
   bb.start();
   bb.on('new_build', function(build) {
