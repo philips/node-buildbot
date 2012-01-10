@@ -43,4 +43,17 @@ exports['test_buildbot_finished'] = function(test, assert) {
   });
 }
 
+exports['test_buildbot_builder_build'] = function(test, assert) {
+  bb = setupPollTest();
+  var revision = 'deadbeef';
 
+  var body = 'username=philips&revision=deadbeef';
+  var path = sprintf(bb._forceURL, 'Linux');
+  var scope = nock(base_url)
+                  .post(path, body)
+                  .reply(201, 'OK');
+  bb.build(revision, {name: 'philips'}, function(error, body) {
+    scope.done();
+    test.finish();
+  });
+}
